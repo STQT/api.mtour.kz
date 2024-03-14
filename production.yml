@@ -1,10 +1,10 @@
 version: '3'
 
 volumes:
-  production_postgres_data: {}
-  production_postgres_data_backups: {}
-  production_traefik: {}
-  production_django_media: {}
+  prod_postgres_data: {}
+  prod_postgres_data_backups: {}
+  prod_traefik: {}
+  prod_django_media: {}
 
 services:
   django: &django
@@ -32,8 +32,8 @@ services:
       dockerfile: ./compose/production/postgres/Dockerfile
     image: medtour_production_postgres
     volumes:
-      - production_postgres_data:/var/lib/postgresql/data
-      - production_postgres_data_backups:/backups
+      - prod_postgres_data:/var/lib/postgresql/data
+      - prod_postgres_data_backups:/backups
     env_file:
       - ./.envs/.production/.postgres
 
