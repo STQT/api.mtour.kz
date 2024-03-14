@@ -19,7 +19,6 @@ sitemaps = {
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
-    path("about/", TemplateView.as_view(template_name="pages/about.html"), name="about"),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
@@ -29,8 +28,6 @@ urlpatterns = [
     # path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("accounts/", include("phone_auth.urls")),
-    # path("oauth2/callback/apple/", apple_callback),
-
 ]
 # urlpatterns += [path('i18n/', include('django.conf.urls.i18n')),]
 

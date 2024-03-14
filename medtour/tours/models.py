@@ -126,7 +126,7 @@ class TourShots(OrderedModel):
     @property
     def thumbnail_preview(self):
         if self.photo:
-            _thumbnail = get_thumbnail(self.photo, '50x50', upscale=False, crop="center", quality=100)
+            _thumbnail = get_thumbnail(self.photo, '300x350', upscale=False, crop="center", quality=100)
             return format_html(
                 '<img src="{}" width="{}" height="{}">'.format(_thumbnail.url, _thumbnail.width, _thumbnail.height))
         return ""
@@ -248,8 +248,8 @@ class CommentTour(models.Model):
 class TourBookingWeekDays(models.Model):
     tour = models.OneToOneField(Tour, on_delete=models.CASCADE)
     days = MultiSelectField(choices=WeekDayChoice.choices,
-                            default=WeekDayChoice.WEDNESDAY,
-                            max_choices=10)
+                            default=[day[0] for day in WeekDayChoice.choices],
+                            max_choices=7)
 
     class Meta:
         verbose_name = _("День бронирования тура")

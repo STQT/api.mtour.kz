@@ -3,15 +3,10 @@ from drf_spectacular import types
 from drf_spectacular.utils import extend_schema_field
 from ordered_model.serializers import OrderedModelSerializer
 from rest_framework import serializers
-from rest_framework.filters import OrderingFilter
 
 from medtour.contrib.sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
-from medtour.guides.models import (
-    Program, ProgramServices, ProgramInfoSchedule,
-    ProgramPlaces, ProgramShots, ProgramReview, ProgramServices, ProgramPrice)
-from medtour.tours.models import TourShots
+from medtour.guides.models import Guide, GuideProgram, GuideReview, GuideServices, GuideShots
 from medtour.users.serializers import CountrySerializer, RegionSerializer
-from medtour.utils.constants import LanguagesChoice
 
 
 class GuideServicesSmallSerializer(serializers.Serializer):
@@ -19,12 +14,12 @@ class GuideServicesSmallSerializer(serializers.Serializer):
     title = serializers.CharField()
 
 
-class ProgramReviewSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField(source="user.avatar", read_only=True, allow_null=True, required=False)  # noqa
+class GuideReviewSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField(source="user.avatar", read_only=True, allow_null=True, required=False)
     userData = serializers.SerializerMethodField(read_only=True, allow_null=True)
 
     class Meta:
-        model = ProgramReview
+        model = GuideReview
         fields = "__all__"
 
     @extend_schema_field(types.OpenApiTypes.STR)
@@ -44,80 +39,105 @@ class AverageGuideRatingSerializer(serializers.Serializer):
     reviews__count = serializers.IntegerField(allow_null=True)
 
 
-class ProgramInfoScheduleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProgramInfoSchedule
-        fields = "__all__"
-
-
-class ProgramPlacesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProgramPlaces
-        fields = "__all__"
-
-
-class ProgramSerializer(serializers.ModelSerializer):
-    languages = serializers.MultipleChoiceField(choices=LanguagesChoice.choices)
-
-    class Meta:
-        model = Program
-        fields = "__all__"
-
-
-class ProgramShotsSerializer(serializers.ModelSerializer):
+class GuidePOSTShotsSerializer(OrderedModelSerializer):
     thumbnail = HyperlinkedSorlImageField(
-        '570x360',
+        '752x350',
         options={"crop": "center"},
         source='photo',
         read_only=True
     )
 
     class Meta:
-        model = ProgramShots
-        fields = ("thumbnail",)
+        model = GuideShots
+        exclude = ("order", )
 
 
-class ProgramListSerializer(serializers.ModelSerializer):
-    program_shots = ProgramShotsSerializer(many=True, read_only=True)
+class GuideShotsSerializer(OrderedModelSerializer):
+    thumbnail = HyperlinkedSorlImageField(
+        '752x350',
+        options={"crop": "center"},
+        source='photo',
+        read_only=True
+    )
 
     class Meta:
-        model = Program
-        fields = ["id", "name", "program_shots", "seats_count"]
-
-
-class ProgramPriceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProgramPrice
+        model = GuideShots
         fields = "__all__"
 
 
-class ProgramDetailSerializer(serializers.ModelSerializer):
-    languages = serializers.MultipleChoiceField(choices=LanguagesChoice.choices)
-    program_shots = ProgramShotsSerializer(many=True)
-    services = GuideServicesSmallSerializer(read_only=True, many=True)
-    excluded_services = GuideServicesSmallSerializer(read_only=True, many=True)
-    guide_name = serializers.StringRelatedField(source='guide.title')
+class GuideSerializer(serializers.ModelSerializer):
+    guide_shots = GuideShotsSerializer(read_only=True, many=True, required=False, allow_null=True)
+    minimum_price = serializers.IntegerField(read_only=True, default=0)
+    is_moderated = serializers.BooleanField(default=True, read_only=True)
+
+    class Meta:
+        model = Guide
+        exclude = ("created_at", "is_deleted", "is_subscribed", "is_top")
+
+
+class GuideReadSerializer(serializers.ModelSerializer):
+    region = RegionSerializer(many=False, read_only=True)
+    country = CountrySerializer(many=False, read_only=True)
     average_rating = serializers.SerializerMethodField()
-    schedules = serializers.SerializerMethodField()
-    places = ProgramPlacesSerializer(many=True, label="Местности программы")
-    program_prices = ProgramPriceSerializer(many=True)
+    guide_shots = GuideShotsSerializer(read_only=True, many=True, required=False, allow_null=True)
 
     class Meta:
-        model = Program
+        model = Guide
         fields = "__all__"
-
-    @extend_schema_field(ProgramInfoScheduleSerializer(many=True, label="Расписание программы гида"))
-    def get_schedules(self, obj):
-        schedules = obj.schedules.all().order_by('start_time')
-        serializer = ProgramInfoScheduleSerializer(schedules, many=True)
-        return serializer.data
 
     @extend_schema_field(AverageGuideRatingSerializer)
     def get_average_rating(self, instance):
-        return instance.guide.average_rating
+        return instance.average_rating
 
 
-class ProgramServicesSerializer(serializers.ModelSerializer):
+class GuideListSerializer(serializers.ModelSerializer):
+    guide_shots = GuideShotsSerializer(read_only=True, many=True, required=False, allow_null=True)
+    minimum_price = serializers.IntegerField(read_only=True, default=0)
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
-        model = ProgramServices
+        model = Guide
+        fields = ("id", "title", "guide_shots", "minimum_price", "average_rating")
+
+    @extend_schema_field(AverageGuideRatingSerializer)
+    def get_average_rating(self, instance):
+        return instance.average_rating
+
+
+class GuideProgramSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuideProgram
+        fields = "__all__"
+
+
+class GuideProgramListSerializer(serializers.ModelSerializer):
+    thumbnail = HyperlinkedSorlImageField(
+        '752x350',
+        options={"crop": "center"},
+        source='photo',
+        read_only=True
+    )
+
+    class Meta:
+        model = GuideProgram
+        exclude = ["services", "venue_lon", "venue_lat", "venue_address", "description"]
+
+
+class GuideProgramDetailSerializer(serializers.ModelSerializer):
+    thumbnail = HyperlinkedSorlImageField(
+        '752x350',
+        options={"crop": "center"},
+        source='photo',
+        read_only=True
+    )
+    services = GuideServicesSmallSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = GuideProgram
+        fields = "__all__"
+
+
+class GuideServicesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GuideServices
         fields = "__all__"

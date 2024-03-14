@@ -1,9 +1,9 @@
-.. Medtour documentation master file, created by
+.. MedTour documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Medtour's documentation!
+Welcome to MedTour's documentation!
 ======================================================================
 
 .. toctree::

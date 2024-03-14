@@ -9,15 +9,16 @@ from drf_spectacular.utils import extend_schema_field
 from phone_auth.models import EmailAddress, PhoneNumber
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer, \
+    TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from medtour.contrib.drf_serializer_cache import SerializerCacheMixin
+from medtour.guides.models import Guide
 from medtour.orders.models import Payment
 from medtour.tours.models import Tour
 from medtour.users.models import Country, Region, ActivateCode, City
 from medtour.users.models import Organization, Person, OrganizationCategory
-from medtour.utils.constants import OrgTypeChoice
 
 User = get_user_model()
 
@@ -186,6 +187,8 @@ class UserReadSerializer(serializers.ModelSerializer):
             data["client"] = ProfileSerializer(instance.people).data
         elif hasattr(instance, "organization"):
             data["partner"] = OrganizationSerializer(instance.organization).data
+            guide_qs = Guide.objects.filter(org=instance.organization)
+            data["guide"] = guide_qs.first().pk if guide_qs.exists() else None
             data["tours"] = ToursOnOrganizationSerializer(instance.organization.tours.filter(is_deleted=False),
                                                           many=True).data
         return data
@@ -201,6 +204,10 @@ class TokenObtainLifetimeSerializer(TokenObtainPairSerializer):
     guide = serializers.IntegerField(read_only=True, allow_null=True)
     email = EmailAddressSerializer(read_only=True)
     phone = PhoneNumberSerializer(read_only=True)
+    pick = serializers.CharField(read_only=True)
+
+    class Meta:
+        fields = "__all__"
 
     # def validate(self, attrs):
     #     authenticate_kwargs = {
@@ -278,6 +285,8 @@ class TokenObtainLifetimeSerializer(TokenObtainPairSerializer):
         elif self.user.related_user[1] == "organization":
             data["partner"] = OrganizationSerializer(related_user).data
             data["tours"] = ToursOnOrganizationSerializer(related_user.tours.all(), many=True).data
+            guide_qs = Guide.objects.filter(org=related_user)
+            data["guide"] = guide_qs.first().pk if guide_qs.exists() else None
         data['lifetime'] = int(refresh.access_token.lifetime.total_seconds())
         return data
 
@@ -291,8 +300,23 @@ class TokenRefreshLifetimeSerializer(TokenRefreshSerializer):
         return data
 
 
-class ResponseRegisterSerializer(serializers.Serializer):
-    access = serializers.CharField()
+class ResponseRegisterSerializer(serializers.ModelSerializer):
+    email = serializers.SerializerMethodField()
+    phone = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'username', 'phone', "is_organization", "pick")
+
+    @extend_schema_field(OpenApiTypes.STR)
+    def get_phone(self, obj):
+        phone = obj.phonenumber_set
+        return str(phone.first().phone) if phone.exists() else None
+
+    @extend_schema_field(OpenApiTypes.STR)
+    def get_email(self, obj):
+        email = obj.emailaddress_set
+        return email.first().email if email.exists() else None
 
 
 class RegisterUserSerializer(serializers.ModelSerializer):
@@ -301,28 +325,34 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     country = serializers.CharField(max_length=2, min_length=2, write_only=True, required=False)
     phone = PhoneNumberField(required=False)
     email = serializers.EmailField(required=False)
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'password', 'phone', 'country',
-                  "first_name", "last_name")
+        fields = ('id', 'email', 'username', 'password', 'phone', 'country', "is_organization", "pick")
+
+    @staticmethod
+    def create(validated_data):
+        try:
+            return User.objects.create_user(**validated_data)
+        except IntegrityError as e:
+            logging.error("User creation failed: %s", e)
+            return User.objects.none()
 
 
 class RegisterOrgSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=128, min_length=6, write_only=True)
-    username = serializers.CharField(max_length=128, read_only=True)
+    is_organization = serializers.BooleanField(default=True)
     country = serializers.CharField(max_length=2, min_length=2, write_only=True)
     phone = PhoneNumberField(required=False)
     email = serializers.EmailField(required=False)
-    org_type = serializers.ChoiceField(choices=OrgTypeChoice.choices)
-    org_name = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'password', 'phone', 'is_organization', "country", "pick",
-                  "org_name", "org_type")
+        fields = ('id', 'email', 'username', 'password', 'phone', 'is_organization', "country", "pick")
+
+    @staticmethod
+    def create(validated_data):
+        return User.objects.create_user(**validated_data)
 
 
 class CodeSerializer(serializers.Serializer):
@@ -433,7 +463,3 @@ class ActivateCodeSerializer(serializers.Serializer):
     class Meta:
         model = ActivateCode
         fields = "__all__"
-
-
-class Oauth2CodeSerializer(serializers.Serializer):
-    code = serializers.CharField()

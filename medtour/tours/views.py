@@ -14,7 +14,6 @@ from medtour.contrib.exceptions import ImATeapot
 from medtour.contrib.required_field_list_view.viewsets import TourIdRequiredFieldsModelViewSet
 from medtour.contrib.serializers import ReadWriteSerializerMixin
 from medtour.contrib.soft_delete_model import SoftDeleteModelViewSet
-from medtour.main.serializers import ContentSerializer
 from medtour.tours.serializers import (
     TourSerializer, TourPaidServicesSerializer,
     TourLocationSerializer, TourShotsSerializer,
@@ -323,7 +322,7 @@ class TourManyViewWithoutPagination(generics.ListAPIView):
         proportion__avg=Round(Avg('comments__proportion'), 2, output_field=models.FloatField()),
         comments__count=Count('comments__purity', output_field=models.FloatField())
     ).prefetch_related('tour_shots').select_related("org__user", "category", "region")
-    serializer_class = ContentSerializer
+    serializer_class = TourListSerializer
 
     @extend_schema(summary="Получение много туров по конкретным id",
                    parameters=[OpenApiParameter(name="id__in", description="Введите id__in туров", required=True)],

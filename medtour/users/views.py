@@ -1,13 +1,8 @@
-import requests
-
-from urllib.parse import urlencode, unquote
-
 from dj_rest_auth.serializers import PasswordChangeSerializer
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db import transaction
-from django.http import HttpResponseRedirect, HttpResponse
 from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,7 +10,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.views.generic import DetailView, RedirectView, UpdateView
 
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view  # noqa F405
 from phone_auth.models import EmailAddress, PhoneNumber
 from rest_framework import mixins, permissions, status, viewsets, generics
 from rest_framework.decorators import action
@@ -28,9 +23,6 @@ from rest_framework_simplejwt.serializers import TokenRefreshSerializer, TokenBl
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenViewBase, TokenBlacklistView
 
-from medtour.contrib.oauth2 import OauthException
-from medtour.contrib.oauth2.facebook import FacebookOAuth
-from medtour.contrib.oauth2.google import GoogleOAuth
 from medtour.contrib.pagination import StandardResultsSetPagination
 from medtour.notifications.models import Notification
 from medtour.notifications.serializers import NotificationSerializer
@@ -43,9 +35,8 @@ from medtour.users.serializers import (TokenObtainLifetimeSerializer, TokenRefre
                                        PayHistoryHistorySerializer, ResetPasswordSerializer, UserVerifySerializer,
                                        PayHistoryHistoryDetailSerializer, PasswordResetChangeSerializer,
                                        PartUserCreateSerializer, CitySerializer,
-                                       FirstPageCountriesSerializer, Oauth2CodeSerializer)
+                                       FirstPageCountriesSerializer)
 from medtour.users.serializers import UserSerializer, CodeSerializer, RegisterUserSerializer
-from medtour.users.tasks import after_create_user_func, create_person, create_partner
 from medtour.users.validators import (verification_code_name, check_is_authorized, validate_password,
                                       refresh_token_setter)
 from medtour.users.models import Organization, Person, Country, Region, ActivateCode, RestoreCode, City
@@ -277,62 +268,68 @@ class PasswordResetActiveView(generics.GenericAPIView):
 class RegisterUserAPIView(generics.GenericAPIView):
     """Регистрация простого смертного пользователя"""
     serializer_class = RegisterUserSerializer
-    response_serializer = ResponseRegisterSerializer
+    response_serialiizer = ResponseRegisterSerializer
     permission_classes = (AllowAny,)
 
-    @staticmethod
-    def create_user(serializer: RegisterUserSerializer):
-        validated_data = serializer.validated_data
-        phone = validated_data.pop('phone', None)
-        email = validated_data.pop('email', None)
-        country = validated_data.pop('country', 'kz')
-        is_organization = validated_data.get('is_organization', False)
-        # username randomizer
-        username = random_username(country, email, phone, is_organization)
-        validated_data.update({"username": username})
-
-        errors = {}
-        if email is None and phone is None:
-            errors["phone"] = [_('Введите пожалуйста email или телефонный номер'), ]
-            errors["email"] = [_('Введите пожалуйста email или телефонный номер'), ]
-
-        if email is not None:
-            if EmailAddress.objects.filter(email__iexact=email).exists():
-                errors["email"] = [_("Email почта уже существует")]
-        if phone is not None:
-            if PhoneNumber.objects.filter(phone=phone).exists():
-                errors["phone"] = [_("Телефонный номер уже существует")]
-
-        if User.objects.filter(username=username).count() > 0:
-            errors["detail"] = [_("Пользователь с вашими введенными данными уже зарегистрированы в системе")]
-        if errors:
-            raise ValidationError(errors)
-        user_creations = serializer.save()
-        if not user_creations:
-            raise ValidationError(detail=_("Пользователь не зарегистрировался возможно уже существует"))
-        after_create_user_func.delay(user_creations.pk, email=email, phone=phone)
-        return user_creations
-
-    @classmethod
-    def created_response_cookie_setter(cls, user):
-        refresh_token = RefreshToken.for_user(user)
-        resp = Response({
-            "access": str(refresh_token.access_token),
-            "refresh": str(refresh_token)}, status=status.HTTP_201_CREATED)
-        refresh_token_setter(resp)
-        return resp
-
-    @extend_schema(responses={201: ResponseRegisterSerializer})
+    @extend_schema(responses=ResponseRegisterSerializer)
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
+        response_serializer = self.response_serialiizer
         if serializer.is_valid(raise_exception=True):
             """ Валидация ПОСТ запроса"""
             validated_data = serializer.validated_data
-            first_name = validated_data.pop('first_name', None)
-            last_name = validated_data.pop('last_name', None)
-            user = self.create_user(serializer)
-            create_person.delay(user.pk, first_name=first_name, last_name=last_name)
-            return self.created_response_cookie_setter(user)
+            phone = validated_data.pop('phone', None)
+            email = validated_data.pop('email', None)
+            country = validated_data.pop('country', 'kz')
+            is_organization = validated_data.get('is_organization', False)
+            # username randomizer
+            username = random_username(country, email, phone, is_organization)
+            validated_data.update({"username": username})
+
+            errors = {}
+            if email is None and phone is None:
+                errors["phone"] = [_('Введите пожалуйста email или телефонный номер'), ]
+                errors["email"] = [_('Введите пожалуйста email или телефонный номер'), ]
+
+            if email is not None:
+                if EmailAddress.objects.filter(email__iexact=email).exists():
+                    errors["email"] = [_("Email почта уже существует")]
+            if phone is not None:
+                if PhoneNumber.objects.filter(phone=phone).exists():
+                    errors["phone"] = [_("Телефонный номер уже существует")]
+
+            if User.objects.filter(username=username).count() > 0:
+                errors["detail"] = [_("Пользователь с вашими введенными данными уже зарегистрированы в системе")]
+            if errors:
+                raise ValidationError(errors)
+            user_creations = serializer.save()
+            if not user_creations:
+                raise ValidationError(detail=_("Пользователь не зарегистрировался возможно уже существует"))
+            """Отправка кода пользователю"""  # TODO: convert to function after
+            user = User.objects.filter(pk=serializer.data.get('id')).first()
+            # TODO: celery
+            if phone:
+                PhoneNumber.objects.create(user=user, phone=phone)
+            if email:
+                EmailAddress.objects.create(user=user, email=email)
+            code = ActivateCode.objects.create(user=user)
+
+            # TODO: celery
+            message = _('Ссылка: {}/activate/?userId={}&code={}').format(
+                Site.objects.get_current().domain,
+                user.pk,
+                str(code.number)
+            )
+            if email:
+                user.send_message_user(subject=settings.DEFAULT_FROM_EMAIL,
+                                       from_email=settings.DEFAULT_FROM_EMAIL,
+                                       message=message,
+                                       emails=[email])
+            else:
+                user.send_message_user(subject=settings.DEFAULT_FROM_EMAIL,
+                                       message=message,
+                                       phone=str(phone))
+            return Response(response_serializer(user).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -342,20 +339,6 @@ class RegisterOrgAPIView(RegisterUserAPIView):
     Обязательно указать юзернейм для платежной системы
     """
     serializer_class = RegisterOrgSerializer
-
-    @extend_schema(responses={201: ResponseRegisterSerializer})
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            """ Валидация ПОСТ запроса для партнёров"""
-            validated_data = serializer.validated_data
-            org_type = validated_data.pop('org_type', None)
-            org_name = validated_data.pop('org_name', None)
-            validated_data.update({"is_organization": True})
-            user = self.create_user(serializer)
-            create_partner.delay(user.pk, org_name=org_name, org_type=org_type)
-            return self.created_response_cookie_setter(user)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VerifyCodeView(generics.GenericAPIView):
@@ -505,11 +488,12 @@ class CookieTokenObtainPairView(TokenObtainPairView):
 
 
 class CookieTokenRefreshView(TokenRefreshView):
-    serializer_class = CookieTokenRefreshSerializer
-
     def finalize_response(self, request, response, *args, **kwargs):
+        response.set_cookie('sharik', "darik")
         refresh_token_setter(response)
         return super().finalize_response(request, response, *args, **kwargs)
+
+    serializer_class = CookieTokenRefreshSerializer
 
 
 class CookieTokenLogoutView(TokenBlacklistView):
@@ -646,11 +630,9 @@ class NotificationViewSet(mixins.ListModelMixin,
     permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        serializer = self.get_serializer(
-            self.queryset.filter(
-                user=self.request.user,
-                read=self.request.query_params.get('read', False)),
-            many=True)
+        serializer = self.get_serializer(self.queryset.filter(user=self.request.user,
+                                                              read=self.request.query_params.
+                                                              get('read', False)), many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
@@ -658,137 +640,3 @@ class NotificationViewSet(mixins.ListModelMixin,
         notification = self.queryset.get(pk=kwargs['pk'])
         serializer = NotificationSerializer(notification)
         return Response(serializer.data)
-
-
-class OauthView(APIView):
-    serializer_class = Oauth2CodeSerializer
-    provider_class = GoogleOAuth
-
-    @extend_schema(responses={200: ResponseRegisterSerializer})
-    def post(self, request, *args, **kwargs):
-        """После того как пользователь возвращается
-        на урл localhost:3000/oauth2/callback/{provider}/?code={code}...\n
-        Нужно будет на этот запрос отправить query parameter {code}
-        """
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            data = serializer.validated_data
-            code = unquote(data["code"])
-            try:
-                userinfo_data = self.provider_class.get_validated_data(code)
-            except OauthException:
-                return Response({"detail": _("Ваш временный ключ провайдера устарел.\n"
-                                             "Пожалуйста повторите авторизацию")},
-                                status=status.HTTP_408_REQUEST_TIMEOUT)
-            email = EmailAddress.objects.filter(email__iexact=userinfo_data.get("email"))
-            if email.exists():
-                refresh = RefreshToken.for_user(email.first().user)
-            else:
-                user = User.objects.create_user(username=userinfo_data.get('id'),
-                                                first_name=userinfo_data.get('first_name'),
-                                                last_name=userinfo_data.get('last_name'))
-                email = EmailAddress.objects.create(email=userinfo_data.get('email'), user=user)
-                refresh = RefreshToken.for_user(email.user)
-            resp = Response({'refresh': str(refresh), 'access': str(refresh.access_token)},
-                            status=status.HTTP_200_OK)
-            refresh_token_setter(resp)
-            return resp
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class GoogleCallbackAPIView(OauthView):
-    provider_class = GoogleOAuth
-
-
-class FacebookCallbackAPIView(OauthView):
-    provider_class = FacebookOAuth
-
-#
-# def google_oauth_login(request):
-#     # Redirect the user to the Google OAuth consent page
-#     url = GoogleOAuth.generate_redirect_url()
-#     return HttpResponseRedirect(url)
-#
-#
-def facebook_login(request):
-    url = FacebookOAuth.generate_redirect_url()
-    return HttpResponseRedirect(url)
-
-#
-# def facebook_callback(request):
-#     code = request.GET.get('code')
-#     user_data = FacebookOAuth.get_validated_data(code)
-#     user_email = user_data.get('email')
-#     # Handle the authentication and further processing as needed
-#
-#     return HttpResponse("QALE")  # Redirect to a success page or your desired endpoint
-#
-#
-# def google_callback(request):
-#     code = request.GET.get('code')
-#     user_data = GoogleOAuth.get_validated_data(code)
-#     user_email = user_data.get('email')
-#     # Handle the authentication and further processing as needed
-#
-#     return HttpResponse("QALE")  # Redirect to a success page or your desired endpoint
-
-from urllib.parse import urlencode
-
-def apple_signin(request):
-    apple_team_id = 'WP6NPBMNZK'
-    client_id = 'WP6NPBMNZK'
-    redirect_uri = 'https://mtour.kz/oauth2/callback/apple'
-    scope = 'email'
-    state = 'your_state_parameter'
-
-    params = {
-        'response_type': 'code',
-        'client_id': client_id,
-        'redirect_uri': redirect_uri,
-        'scope': scope,
-        'state': state,
-        'response_mode': 'form_post',
-    }
-
-    auth_url = f'https://appleid.apple.com/auth/authorize?{urlencode(params)}'
-    print(auth_url)
-
-    return HttpResponseRedirect(auth_url)
-
-
-import requests
-
-def apple_callback(request):
-    code = request.POST.get('code')  # Received as a form post
-    state = request.POST.get('state')  # Received as a form post
-    redirect_uri = 'http://localhost:3000/oauth2/callback/apple'
-    client_id = 'your_client_id'
-    client_secret = 'your_client_secret'
-
-    token_url = 'https://appleid.apple.com/auth/token'
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    }
-    data = {
-        'grant_type': 'authorization_code',
-        'code': code,
-        'redirect_uri': redirect_uri,
-        'client_id': client_id,
-        'client_secret': client_secret,
-    }
-
-    response = requests.post(token_url, headers=headers, data=data)
-    if response.status_code == 200:
-        # Parse the access token and ID token from the response
-        access_token = response.json().get('access_token')
-        id_token = response.json().get('id_token')
-
-        # Verify the ID token and extract user information
-        # Implement the verification and extraction logic here
-
-        # Redirect or process the authenticated user as needed
-
-    # Handle error cases and redirect to appropriate pages
-
-    return HttpResponseRedirect('your_success_url')

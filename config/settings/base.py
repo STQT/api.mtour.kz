@@ -78,15 +78,20 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
     "modeltranslation",
-    # "jazzmin",
+    "jazzmin",
     "django.contrib.admin",
     "django.forms",
     "django.contrib.sitemaps",
 ]
 THIRD_PARTY_APPS = [
+    "crispy_forms",
+    "crispy_bootstrap5",
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
+    # "allauth",
+    # "allauth.account",
+    # "allauth.socialaccount",
     "corsheaders",
     "drf_spectacular",
     "rest_framework_simplejwt",
@@ -100,7 +105,6 @@ THIRD_PARTY_APPS = [
     "ordered_model",
     "sorl.thumbnail",
     "sorl_thumbnail_serializer",
-    # "weasyprint",
 ]
 
 LOCAL_APPS = [
@@ -133,6 +137,7 @@ MIGRATION_MODULES = {"sites": "medtour.contrib.sites.migrations"}
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "phone_auth.backend.CustomAuthBackend",
+    # "allauth.account.auth_backends.AuthenticationBackend",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
@@ -222,6 +227,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
+                # "medtour.users.context_processors.allauth_settings",
             ],
         },
     }
@@ -316,6 +322,28 @@ CELERY_TASK_TIME_LIMIT = 5 * 60
 CELERY_TASK_SOFT_TIME_LIMIT = 60
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#beat-scheduler
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# # django-allauth
+# # ------------------------------------------------------------------------------
+# ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
+# # https://django-allauth.readthedocs.io/en/latest/configuration.html
+# ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+# # https://django-allauth.readthedocs.io/en/latest/configuration.html
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_LOGOUT_ON_GET = True
+# # https://django-allauth.readthedocs.io/en/latest/configuration.html
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# # https://django-allauth.readthedocs.io/en/latest/configuration.html
+# ACCOUNT_ADAPTER = "medtour.users.adapters.AccountAdapter"
+# # https://django-allauth.readthedocs.io/en/latest/forms.html
+# ACCOUNT_FORMS = {"signup": "medtour.users.forms.UserSignupForm"}
+# # https://django-allauth.readthedocs.io/en/latest/configuration.html
+# SOCIALACCOUNT_ADAPTER = "medtour.users.adapters.SocialAccountAdapter"
+# # https://django-allauth.readthedocs.io/en/latest/forms.html
+# SOCIALACCOUNT_FORMS = {"signup": "medtour.users.forms.UserSocialSignupForm"}
+
+
+# phone number auth
+# default behaviour - User can login through phone, email, or username.
 AUTHENTICATION_METHODS = {'phone', 'email', 'username'}
 
 # Works with all possible combinations.
@@ -333,6 +361,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "medtour.contrib.authentication.CachedJWTAuthentication",
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
@@ -398,8 +427,8 @@ SPECTACULAR_SETTINGS = {
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 # ACCOUNT_USERNAME_REQUIRED = True
 
-SMS_LOGIN = env("SMSC_LOGIN", default="qwer")
-SMS_PASSWORD = env("SMSC_PASSWORD", default="qwer")
+SMS_LOGIN = env("SMSC_LOGIN")
+SMS_PASSWORD = env("SMSC_PASSWORD")
 OLD_PASSWORD_FIELD_ENABLED = True
 
 CORS_ALLOW_CREDENTIALS = True
@@ -589,5 +618,3 @@ THUMBNAIL_FORMAT = 'WEBP'
 
 APPLICATION_SEND_BOT_TOKEN = env("APPLICATION_SEND_BOT_TOKEN")
 APPLICATION_SEND_BOT_GROUP_ID = env("APPLICATION_SEND_BOT_GROUP_ID")
-OAUTH_GOOGLE_SECRET = env.str("OAUTH_GOOGLE_SECRET", default="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")
-OAUTH_FACEBOOK_SECRET = env.str("OAUTH_FACEBOOK_SECRET", default="55fde4a15b2c9026fa23b2112ba50bfc")

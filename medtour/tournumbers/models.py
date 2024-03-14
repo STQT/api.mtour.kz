@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from ordered_model.models import OrderedModel
@@ -34,8 +34,7 @@ class TourNumbers(OrderedModel, SoftDeleteModel):
 
 
 class NumberShots(OrderedModel):
-    tour_number = models.ForeignKey("tournumbers.TourNumbers", verbose_name=_("Номер"),
-                                    on_delete=models.CASCADE, related_name="number_shots")
+    tour_number = models.ForeignKey("tournumbers.TourNumbers", verbose_name=_("Номер"), on_delete=models.CASCADE)
     photo = ImageField(_("Изображение"), upload_to=get_shots_path)
     name = models.CharField(_("Имя изображения"), null=True, max_length=50, blank=True)
     order_with_respect_to = "tour_number"
@@ -92,27 +91,3 @@ class NumberComfort(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class NumberReviews(models.Model):
-    tour = models.ForeignKey("tournumbers.TourNumbers", on_delete=models.CASCADE, related_name="number_reviews")
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE, related_name="number_reviews")
-    purity = models.IntegerField(_("Чистота"), validators=[MinValueValidator(0), MaxValueValidator(5)], default=0)
-    service = models.IntegerField(_("Сервис"), validators=[MinValueValidator(0), MaxValueValidator(5)], default=0)
-    location = models.IntegerField(_("Местоположение"), validators=[MinValueValidator(0), MaxValueValidator(5)],
-                                   default=0)
-    staff = models.IntegerField(_("Персонал"), validators=[MinValueValidator(0), MaxValueValidator(5)], default=0)
-    proportion = models.IntegerField(_("Соотношение цена/качество"),
-                                     validators=[MinValueValidator(0), MaxValueValidator(5)], default=0)
-    text = models.TextField(validators=[
-        MinLengthValidator(20, message=_("Минимальная длина отзыва должна превышать 20 символа"))
-    ])
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.user) + ' | ' + str(self.tour)
-
-    class Meta:
-        verbose_name = _("Отзыв номера")
-        verbose_name_plural = _("Отзывы номеров")
-        ordering = ("-created_at",)

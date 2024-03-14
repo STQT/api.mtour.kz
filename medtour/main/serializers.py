@@ -12,14 +12,14 @@ class ContentSerializer(serializers.Serializer):
     title = serializers.CharField(default="Көктерек")
     avg_rating = serializers.SerializerMethodField(allow_null=True, default=3.5)
     slug = serializers.CharField(default="kokterek")
-    obj_type = serializers.CharField(default="tour")
+    type = serializers.CharField(default="tour")
     shots = serializers.SerializerMethodField(allow_null=True,
                                               default=["cache/72/12/7212a7f6ff2346379687fc5a9419c039.webp"])
     city = serializers.SerializerMethodField(allow_null=True)
-    price = serializers.IntegerField(read_only=True)
+    minimum_price = serializers.IntegerField(read_only=True)
     category = serializers.SerializerMethodField(read_only=True)
     category_slug = serializers.SerializerMethodField(read_only=True)
-    reviews_count = serializers.SerializerMethodField(read_only=True)
+    is_top = serializers.BooleanField()
 
     @extend_schema_field(OpenApiTypes.NUMBER)
     def get_avg_rating(self, obj):
@@ -46,26 +46,20 @@ class ContentSerializer(serializers.Serializer):
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_city(self, obj):
-        if hasattr(obj, 'tour') and hasattr(obj.tour.city, 'name'):
-            return obj.tour.city.name
+        if hasattr(obj.city, 'name'):
+            return obj.city.name
         return None
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_category(self, obj):
-        return obj.tour.category.title
+        return obj.category.title
 
     @extend_schema_field(OpenApiTypes.STR)
     def get_category_slug(self, obj):
-        return obj.tour.category.slug
-
-    @extend_schema_field(OpenApiTypes.INT)
-    def get_reviews_count(self, obj):
-        return obj.reviews__count
+        return obj.category.slug
 
 
 class SearchCitySerializer(serializers.ModelSerializer):
-    slug = serializers.SlugField(required=True)
-
     class Meta:
         model = City
         fields = ('name', 'slug')
@@ -80,7 +74,7 @@ class CategorySerializer(serializers.Serializer):
     title_color = serializers.CharField()
     slug = serializers.CharField()
     photo = serializers.ImageField()
-    icon = serializers.FileField()
+    icon = serializers.ImageField()
+    icon_active = serializers.ImageField()
     column = serializers.CharField()
     type = serializers.CharField()
-    is_main = serializers.BooleanField()

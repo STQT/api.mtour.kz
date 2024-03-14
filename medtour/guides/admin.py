@@ -1,66 +1,35 @@
 from django.contrib import admin
 
-from medtour.guides.models import (
-    Program, ProgramServices, GuideCategory, ProgramInfoSchedule,
-    ProgramPlaces, ProgramShots, ProgramReview)
+from medtour.guides.models import (Guide, GuideReview,
+                                   GuideShots, GuideProgram, GuideServices, GuideCategory)
 
 
-class ProgramInfoScheduleInline(admin.TabularInline):
-    model = ProgramInfoSchedule
-    extra = 0
+@admin.register(Guide)
+class GuideAdmin(admin.ModelAdmin):
+    list_display = ["title", "org"]
 
 
-class ProgramPlacesInline(admin.TabularInline):
-    model = ProgramPlaces
-    extra = 0
-
-
-class ProgramInline(admin.TabularInline):
-    model = Program
-    extra = 0
-
-
-class ProgramShotsInline(admin.TabularInline):
-    model = ProgramShots
-    extra = 0
-
-
-@admin.register(ProgramReview)
-class ProgramReviewAdmin(admin.ModelAdmin):
+@admin.register(GuideReview)
+class GuideReviewAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(Program)
-class ProgramAdmin(admin.ModelAdmin):
-    raw_id_fields = ['tour']
-    list_select_related = ['tour']
-    inlines = [
-        ProgramShotsInline,
-        ProgramInfoScheduleInline,
-        ProgramPlacesInline,
-    ]
+@admin.register(GuideShots)
+class GuideShotsAdmin(admin.ModelAdmin):
+    pass
 
 
-@admin.register(ProgramServices)
-class ProgramServicesAdmin(admin.ModelAdmin):
+@admin.register(GuideProgram)
+class GuideProgramAdmin(admin.ModelAdmin):
+    raw_id_fields = ['guide']
+    list_select_related = ['guide']
+
+
+@admin.register(GuideServices)
+class GuideServicesAdmin(admin.ModelAdmin):
     pass
 
 
 @admin.register(GuideCategory)
 class GuideCategoryAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProgramInfoSchedule)
-class ProgramScheduleAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProgramPlaces)
-class ProgramPlacesAdmin(admin.ModelAdmin):
-    pass
-
-
-@admin.register(ProgramShots)
-class ProgramShotsAdmin(admin.ModelAdmin):
     pass

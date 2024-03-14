@@ -3,8 +3,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
 
+# CREDENTIALS
+from medtour.paycredentials.views import Kassa24CallbackView
 # TOURS
-from medtour.applications.views import TourApplicationViewSet, CommentTourApplicationViewSet
+from medtour.applications.views import TourApplicationViewSet, ApplicationCreateView, CommentTourApplicationViewSet
 from medtour.sanatorium.views import ReservationsView, SendConfirmationCodeView, ValidateConfirmationCodeView
 from medtour.subscriptions.views import TourSubscribeViewSet
 from medtour.tournumbers.views import (
@@ -25,8 +27,8 @@ from medtour.users.views import (
 )
 # GUIDES
 from medtour.guides.views import (
-    ProgramViewSet, ProgramServicesViewset, ProgramManyViewWithoutPagination,
-    ProgramPlacesAPIView, ProgramInfoScheduleAPIView, ProgramReviewViewSet
+    GuideViewSet, GuideReviewViewSet, GuideShotsViewSet, GuideProgramViewSet, GuideServicesViewset,
+    GuideManyViewWithoutPagination, GuideProgramManyViewWithoutPagination, GuideSlugView
 )
 
 if settings.DEBUG:
@@ -74,11 +76,11 @@ router.register("crm", ReservationsView)
 router.register("number-cabinets", NumberCabinetsView)
 
 # GUIDES
-router.register('program-reviews', ProgramReviewViewSet)
-router.register('programs', ProgramViewSet)
-router.register('program-services', ProgramServicesViewset)
-router.register('program-places', ProgramPlacesAPIView)
-router.register('program-info-schedules', ProgramInfoScheduleAPIView)
+router.register('guides', GuideViewSet)
+router.register('guide-reviews', GuideReviewViewSet)
+router.register('guide-shots', GuideShotsViewSet)
+router.register('guide-programs', GuideProgramViewSet)
+router.register('guide-services', GuideServicesViewset)
 
 app_name = "v1"
 urlpatterns = router.urls
@@ -91,9 +93,11 @@ urlpatterns += [
     path("confirmationCode/<int:pk>/", SendConfirmationCodeView.as_view()),
     path("confirmationCode/validate/<int:pk>/", ValidateConfirmationCodeView.as_view()),
     path('tours/slug/<slug:slug>/', TourSlugView.as_view(), name='tours-detail-slug'),
+    path('guides/slug/<slug:slug>/', GuideSlugView.as_view(), name='guides-detail-slug'),
     path('numbers/comforts/', NumberComfortView.as_view(), name='tour-number-comforts'),
     path('manyTours/', TourManyViewWithoutPagination.as_view(), name='many-tours-list'),
-    path('manyPrograms/', ProgramManyViewWithoutPagination.as_view(), name='many-programs-list'),
+    path('manyGuides/', GuideManyViewWithoutPagination.as_view(), name='many-guides-list'),
+    path('manyGuidePrograms/', GuideProgramManyViewWithoutPagination.as_view(), name='many-guide-programs-list'),
 
     path("", include("medtour.main.urls", namespace="contents")),
 ]

@@ -12,56 +12,57 @@ from itertools import chain
 
 from rest_framework.views import APIView
 
-from medtour.guides.models import Round, GuideCategory, Program
+from medtour.guides.models import Guide, Round, GuideCategory
 from medtour.main.filters import CityFilter
 from medtour.main.serializers import ContentSerializer, SearchCitySerializer, LockedSerializer, CategorySerializer
-from medtour.tournumbers.models import TourNumbers
 from medtour.tours.models import Tour
 from medtour.users.models import City, OrganizationCategory
 
 
 def get_tours(filters):
-    tour_qs = TourNumbers.objects.filter(**filters).annotate(
-        service__avg=Round(Avg('number_reviews__service'), 2, output_field=models.FloatField()),
-        location__avg=Round(Avg('number_reviews__location'), 2, output_field=models.FloatField()),
-        purity__avg=Round(Avg('number_reviews__purity'), 2, output_field=models.FloatField()),
-        staff__avg=Round(Avg('number_reviews__staff'), 2, output_field=models.FloatField()),
-        proportion__avg=Round(Avg('number_reviews__proportion'), 2, output_field=models.FloatField()),
-        reviews__count=Count('number_reviews__service', output_field=models.IntegerField()),
-        obj_type=Value('numbers', output_field=models.CharField()),
-    ).prefetch_related("number_shots").select_related('tour__city')
+    tour_qs = Tour.objects.filter(**filters).annotate(
+        minimum_price=Min("numbers__price", filter=Q(numbers__is_deleted=False)),
+        service__avg=Round(Avg('comments__service'), 2, output_field=models.FloatField()),
+        location__avg=Round(Avg('comments__location'), 2, output_field=models.FloatField()),
+        purity__avg=Round(Avg('comments__purity'), 2, output_field=models.FloatField()),
+        staff__avg=Round(Avg('comments__staff'), 2, output_field=models.FloatField()),
+        proportion__avg=Round(Avg('comments__proportion'), 2, output_field=models.FloatField()),
+        comments__count=Count('comments__purity', output_field=models.FloatField()),
+        type=Value('tours', output_field=models.CharField()),
+    ).prefetch_related("tour_shots").select_related('city').order_by('is_top')
     return tour_qs
 
 
 def get_guides(filters):
-    guides_queryset = Program.objects.filter(**filters).annotate(
-        service__avg=Round(Avg('program_reviews__service'), 2, output_field=models.FloatField()),
-        location__avg=Round(Avg('program_reviews__location'), 2, output_field=models.FloatField()),
-        staff__avg=Round(Avg('program_reviews__staff'), 2, output_field=models.FloatField()),
-        proportion__avg=Round(Avg('program_reviews__proportion'), 2, output_field=models.FloatField()),
-        reviews__count=Count('program_reviews__service', output_field=models.IntegerField()),
-        obj_type=Value('programs', output_field=models.CharField()),
-    ).prefetch_related('program_shots').select_related('tour__city')
+    guides_queryset = Guide.objects.filter(**filters).annotate(
+        minimum_price=Min("programs__price", filter=Q(programs__is_deleted=False)),
+        service__avg=Round(Avg('guide_reviews__service'), 2, output_field=models.FloatField()),
+        location__avg=Round(Avg('guide_reviews__location'), 2, output_field=models.FloatField()),
+        staff__avg=Round(Avg('guide_reviews__staff'), 2, output_field=models.FloatField()),
+        proportion__avg=Round(Avg('guide_reviews__proportion'), 2, output_field=models.FloatField()),
+        comments__count=Count('guide_reviews__service', output_field=models.FloatField()),
+        type=Value('guides', output_field=models.CharField()),
+    ).prefetch_related('guide_shots').select_related('city')
     return guides_queryset
 
 
-class NumbersProgramsView(APIView):
+class ToursGuidesView(APIView):
     serializer_class = ContentSerializer
-    queryset = Program.objects.all()  # F405
+    queryset = Tour.objects.all()  # F405
 
     @extend_schema(
         parameters=[
             OpenApiParameter("category__slug", type=OpenApiTypes.STR, many=False),
             OpenApiParameter("id__in", type=OpenApiTypes.INT, many=True),
-            # OpenApiParameter("is_top", type=OpenApiTypes.BOOL, many=False),
+            OpenApiParameter("is_top", type=OpenApiTypes.BOOL, many=False),
         ],
         responses={"200": ContentSerializer,
                    "423": LockedSerializer}
     )
     def get(self, request, city, entity, *args, **kwargs):
         filters = {
+            'is_moderated': True,
             'is_deleted': False,
-            'hide': False,
         }
 
         if city != "all":

@@ -9,6 +9,7 @@ from ordered_model.serializers import OrderedModelSerializer
 from rest_framework import serializers
 
 from medtour.contrib.sorl_thumbnail_serializer.fields import HyperlinkedSorlImageField
+from medtour.guides.models import Guide
 from medtour.orders.models import Payment
 from medtour.tours.models import (
     Tour, TourLocation, TourPaidServices, TourAdditionalTitle,
@@ -229,6 +230,7 @@ class TourReadSerializer(serializers.ModelSerializer):
     additional_titles = AdditonalInfoTitleSerializer(many=True, read_only=True)
     medical_profiles = TourMedicalProfileSerializer(many=True)
     numbers_exists = serializers.SerializerMethodField()
+    guides_exists = serializers.SerializerMethodField()
     paid_services_exists = serializers.SerializerMethodField()
     packages_exists = serializers.SerializerMethodField()
 
@@ -243,6 +245,10 @@ class TourReadSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.BooleanField)
     def get_numbers_exists(self, instance):
         return instance.numbers.exists()
+
+    @extend_schema_field(serializers.BooleanField)
+    def get_guides_exists(self, instance):
+        return Guide.objects.filter(region_id=instance.region_id).exists()
 
     @extend_schema_field(serializers.BooleanField)
     def get_packages_exists(self, instance):

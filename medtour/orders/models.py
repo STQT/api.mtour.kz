@@ -95,6 +95,7 @@ class ServiceCartVisitors(models.Model):
 
 
 class Payment(models.Model):
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments")
     amount = models.IntegerField(_("Сумма оплаты"))
     status = models.IntegerField(_("Статус оплаты"), choices=PaymentStatusChoices.choices,
@@ -116,27 +117,3 @@ class Payment(models.Model):
     class Meta:
         verbose_name = _("Оплата")
         verbose_name_plural = _("Оплаты")
-
-
-class Transactions(models.Model):
-    """Транзакции"""
-    check_id = models.CharField(_("check_id"), max_length=25)
-    email = models.CharField(_("email"), max_length=100, blank=True, null=True)
-    phone = models.CharField(_("phone"), max_length=20, blank=True, null=True)
-    total = models.CharField(_("total"), max_length=50, blank=True, null=True)
-    created_at = models.DateTimeField(_("created_at"), auto_now_add=True)
-
-
-class GuideOrders(models.Model):
-    """Заказы"""
-    # TODO: remove CASCADE
-    program = models.ForeignKey("guides.Program", on_delete=models.CASCADE)
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    tour = models.ForeignKey("tours.Tour", on_delete=models.CASCADE)
-    transaction = models.ForeignKey("orders.Transactions", on_delete=models.CASCADE)
-    count = models.IntegerField(_("Количество"))
-    price = models.IntegerField(_("Цена"))
-    sum_total = models.IntegerField(_("Итоговая сумма"))
-    total = models.IntegerField(_("Общая сумма с применением скидки"), default=sum_total)
-
-    created_at = models.DateTimeField(auto_now_add=True)

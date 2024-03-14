@@ -1,13 +1,11 @@
 import logging
 
-try:
-    import sentry_sdk
-    from sentry_sdk.integrations.celery import CeleryIntegration
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.logging import LoggingIntegration
-    from sentry_sdk.integrations.redis import RedisIntegration
-except ImportError:
-    ...
+import sentry_sdk
+from sentry_sdk.integrations.celery import CeleryIntegration
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration
+from sentry_sdk.integrations.redis import RedisIntegration
+
 from .base import *  # noqa
 from .base import env
 
@@ -65,11 +63,11 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 
 # STATIC
 # ------------------------
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
-# STATIC_ROOT = env("DJANGO_STATIC")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = env("DJANGO_STATIC")
 # MEDIA
 # ------------------------------------------------------------------------------
-# MEDIA_ROOT = env("DJANGO_MEDIA")
+MEDIA_ROOT = env("DJANGO_MEDIA")
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
@@ -94,7 +92,7 @@ EMAIL_SUBJECT_PREFIX = env(
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL regex.
-ADMIN_URL = "admin/"
+ADMIN_URL = env("DJANGO_ADMIN_URL")
 
 # Anymail
 # ------------------------------------------------------------------------------

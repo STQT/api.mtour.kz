@@ -70,7 +70,7 @@ class NumberShotsSerializer(OrderedModelSerializer):
 class ListNumbersSerializer(serializers.ModelSerializer):
     number_services = TourNumbersServicesSerializer(many=True, read_only=True, required=False)
     comforts = NumberComfortSerializer(many=True)
-    number_shots = NumberShotsSerializer(many=True, read_only=True)
+    numbershots_set = NumberShotsSerializer(many=True, read_only=True)
 
     class Meta:
         model = TourNumbers

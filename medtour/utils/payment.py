@@ -3,6 +3,7 @@ import base64
 import requests
 from django.conf import settings
 from django.urls import reverse
+from sentry_sdk import capture_message
 
 
 class PaymentApi:
@@ -43,11 +44,11 @@ class PaymentApi:
         response_text = response.text
         if response.status_code == 201:
             return response.json()['url'], False
-        elif settings.DEBUG is False:
-            try:
-                from sentry_sdk import capture_message
-                capture_message("kassa24 error: ", response_text)
-            except ImportError:
-                ...
+        elif response.status_code in [400, 401, 402, 403]:
+            capture_message("kassa24 4xx error: ", response_text)
+            return response_text, True
+        else:
+            capture_message("kassa24 5xx error: ", response_text)
+            return response_text, True
 
 # print(PaymentApi("14141564717596838", "JAKN3fTs1yw15W8k9QBY").create_payment(1555, 142424))
