@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>{{ data.title }}</title>
+  <style>
+    /* Add your custom styles here */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+      padding: 0;
+    }
+
+    .document-header {
+      background-color: lightgray;
+      padding: 10px;
+    }
+
+    .document-title {
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      color: white;
+    }
+
+    .document-content {
+      padding: 20px;
+    }
+
+    .document-footer {
+      background-color: lightgray;
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<header class="document-header">
+  <h1 class="document-title">{{ data.title }}</h1>
+</header>
+<main class="document-content">
+  <!-- Your document content goes here -->
+  {% if data %}
+    <h2>{{ data.title }}</h2>
+    <p>Республика Казахстан, город Астана</p>
+    <p>Дата размещения: {{ data.created_at }}</p>
+    <p>Дата вступления в силу: {{ data.created_at }}</p>
+    {{ data.content|safe }}
+    <p>_____________________________</p>
+    <h5>Предыдущие версии</h5>
+    <p>...</p>
+  {% endif %}
+</main>
+<footer class="document-footer">
+  <p>Copyright &copy; [MTour.kz]</p>
+</footer>
+</body>

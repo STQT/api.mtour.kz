@@ -1,0 +1,202 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{% static 'css/test.css' %}">
+  <title>Document</title>
+</head>
+<body>
+<div class="">
+  <div></div>
+  <div></div>
+  <div class="header h-48 flex items-center content-center bg-bg-header">
+    <div class="container mx-auto">
+      <div class="grid grid-cols-12">
+        <div class="col-span-3"><a class="flex items-center h-full" href="/"><p
+          class="text-5xl font-bold text-light-blue">Med<span class="text-green">Tour</span></p></a></div>
+        <div class="col-span-6 flex flex-row justify-end items-center"><a
+          class="flex items-center h-full flex flex-row items-center text-black font-medium" href="/cart"><img
+          class="w-5 mr-1.5" src="/images/cart.svg" alt="">Корзина<span class="text-light-green ml-1.5">(0)</span></a>
+        </div>
+        <div class="col-span-3">
+          <div class="flex justify-end">
+            <button
+              class="rounded-xl py-2 px-5 shadow-xl border-gradient-to-r from-start-gradient to-end-gradient border text-light-blue mr-5">
+              Войти
+            </button>
+            <button
+              class="rounded-xl py-2 px-5 shadow-xl bg-gradient-to-r from-start-gradient to-end-gradient text-white">
+              Регистрация
+            </button>
+          </div>
+        </div>
+      </div>
+      <ul class="w-4/5 flex flex-row justify-between mx-auto font-medium mt-8 text-[#002C50]">
+        <li class="h-10"><a class="flex items-center h-full" href="/">Главная</a></li>
+        <li class="h-10">
+          <div class="h-full">
+            <button class="font-medium flex flex-row items-center h-full" id="headlessui-listbox-button-:r0:"
+                    type="button" aria-haspopup="true" aria-expanded="false"><img class="pr-1.5" alt="">О Проекте<img
+              class="pl-1.5" src="/images/dropdownArrow.svg" alt=""></button>
+            <div class="relative"></div>
+          </div>
+        </li>
+        <li class="h-10">
+          <div class="h-full">
+            <button class="font-medium flex flex-row items-center h-full" id="headlessui-listbox-button-:r2:"
+                    type="button" aria-haspopup="true" aria-expanded="false"><img class="pr-1.5" alt="">Санатории<img
+              class="pl-1.5" src="/images/dropdownArrow.svg" alt=""></button>
+            <div class="relative"></div>
+          </div>
+        </li>
+        <li class="h-10"><a class="flex items-center h-full" href="/">Способы оплаты</a></li>
+        <li class="h-10"><a class="flex items-center h-full" href="/">Акции</a></li>
+        <li class="h-10"><a class="flex items-center h-full" href="/">Контакты</a></li>
+        <li class="h-10"><a class="flex items-center h-full" href="/">Личный кабинет</a></li>
+      </ul>
+    </div>
+  </div>
+  <main class="">
+    <div>
+      <div class="flex items-center content-center bg-bg-header h-56">
+        <div class="container mx-auto">
+          <div class="w-3/4 mx-auto mb-7 flex flex-row"><img src="/images/extendedSearch.svg" alt="">
+            <p class="underline ml-2 font-medium decoration-1 underline-offset-2 flex flex-row">Расширенный поиск</p>
+            <img class="ml-2" src="/images/dropdownArrow.svg" alt=""></div>
+          <div class="w-3/4 h-20 bg-white rounded-3xl mx-auto flex items-center wrap px-12">
+            <div class="basis-3/4"></div>
+            <div class="basis-3/4"></div>
+            <div class="basis-3/4"></div>
+            <div class="basis-2/12 justify-end ">
+              <button
+                class="rounded-xl py-2 px-5 shadow-xl bg-gradient-to-r from-start-gradient to-end-gradient text-white m-auto block">
+                Найти
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-20 mb-7">
+        <div class="container mx-auto">
+          <div class="flex flex-row items-center mb-2.5"><span class="bg-light-green h-0.5 w-full basis-3/8"></span>
+            <h1 class="w-full basis-2/8 text-center font-bold text-2xl uppercase text-dark-blue">Наши предложения</h1>
+            <span class="bg-light-green h-0.5 w-full basis-3/8 "></span></div>
+          <p class="text-blue-text uppercase font-bold text-center">горячие предложения по лучшим ценам</p></div>
+      </div>
+      <div>
+        <div class="container mx-auto">
+          <div class="flex flex-wrap w-full justify-between"><a href="/place/1">
+            <div class="flex flex-row pb-6 basis-1/2 pl-5">
+              <div class="basis-2/5"><img class="rounded-l-3xl" style="width: 100%; height: 100%;"
+                                          src="https://api.mtour.kz/media/Kurpaty_1Wm8k89.jpg"></div>
+              <div class="basis-3/5 rounded-r-3xl shadow-lg py-6 px-8"><p
+                class="uppercase font-bold text-dark-blue mb-3.5"><a
+                class="flex items-center h-full uppercase font-bold text-dark-blue" href="/place/1">Ак Тилек</a></p>
+                <div class="flex flex-row mb-4">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M8.53834 0.609964C8.70914 0.199318 9.29086 0.199318 9.46166 0.609964L11.5278 5.57744C11.5998 5.75056 11.7626 5.86885 11.9495 5.88383L17.3123 6.31376C17.7556 6.3493 17.9354 6.90256 17.5976 7.19189L13.5117 10.6919C13.3693 10.8139 13.3071 11.0053 13.3506 11.1876L14.5989 16.4208C14.7021 16.8534 14.2315 17.1954 13.8519 16.9635L9.26063 14.1592C9.10062 14.0615 8.89938 14.0615 8.73937 14.1592L4.14806 16.9635C3.76851 17.1954 3.29788 16.8534 3.40108 16.4208L4.64939 11.1876C4.69289 11.0053 4.6307 10.8139 4.48831 10.6919L0.402413 7.19189C0.0646446 6.90256 0.244408 6.3493 0.687735 6.31376L6.05054 5.88383C6.23744 5.86885 6.40024 5.75056 6.47225 5.57744L8.53834 0.609964Z"
+                      fill="#FDB022"></path>
+                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M8.53834 0.609964C8.70914 0.199318 9.29086 0.199318 9.46166 0.609964L11.5278 5.57744C11.5998 5.75056 11.7626 5.86885 11.9495 5.88383L17.3123 6.31376C17.7556 6.3493 17.9354 6.90256 17.5976 7.19189L13.5117 10.6919C13.3693 10.8139 13.3071 11.0053 13.3506 11.1876L14.5989 16.4208C14.7021 16.8534 14.2315 17.1954 13.8519 16.9635L9.26063 14.1592C9.10062 14.0615 8.89938 14.0615 8.73937 14.1592L4.14806 16.9635C3.76851 17.1954 3.29788 16.8534 3.40108 16.4208L4.64939 11.1876C4.69289 11.0053 4.6307 10.8139 4.48831 10.6919L0.402413 7.19189C0.0646446 6.90256 0.244408 6.3493 0.687735 6.31376L6.05054 5.88383C6.23744 5.86885 6.40024 5.75056 6.47225 5.57744L8.53834 0.609964Z"
+                      fill="#FDB022"></path>
+                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M8.53834 0.609964C8.70914 0.199318 9.29086 0.199318 9.46166 0.609964L11.5278 5.57744C11.5998 5.75056 11.7626 5.86885 11.9495 5.88383L17.3123 6.31376C17.7556 6.3493 17.9354 6.90256 17.5976 7.19189L13.5117 10.6919C13.3693 10.8139 13.3071 11.0053 13.3506 11.1876L14.5989 16.4208C14.7021 16.8534 14.2315 17.1954 13.8519 16.9635L9.26063 14.1592C9.10062 14.0615 8.89938 14.0615 8.73937 14.1592L4.14806 16.9635C3.76851 17.1954 3.29788 16.8534 3.40108 16.4208L4.64939 11.1876C4.69289 11.0053 4.6307 10.8139 4.48831 10.6919L0.402413 7.19189C0.0646446 6.90256 0.244408 6.3493 0.687735 6.31376L6.05054 5.88383C6.23744 5.86885 6.40024 5.75056 6.47225 5.57744L8.53834 0.609964Z"
+                      fill="#FDB022"></path>
+                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M8.53834 0.609964C8.70914 0.199318 9.29086 0.199318 9.46166 0.609964L11.5278 5.57744C11.5998 5.75056 11.7626 5.86885 11.9495 5.88383L17.3123 6.31376C17.7556 6.3493 17.9354 6.90256 17.5976 7.19189L13.5117 10.6919C13.3693 10.8139 13.3071 11.0053 13.3506 11.1876L14.5989 16.4208C14.7021 16.8534 14.2315 17.1954 13.8519 16.9635L9.26063 14.1592C9.10062 14.0615 8.89938 14.0615 8.73937 14.1592L4.14806 16.9635C3.76851 17.1954 3.29788 16.8534 3.40108 16.4208L4.64939 11.1876C4.69289 11.0053 4.6307 10.8139 4.48831 10.6919L0.402413 7.19189C0.0646446 6.90256 0.244408 6.3493 0.687735 6.31376L6.05054 5.88383C6.23744 5.86885 6.40024 5.75056 6.47225 5.57744L8.53834 0.609964Z"
+                      fill="#FDB022"></path>
+                  </svg>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M8.53834 0.609964C8.70914 0.199318 9.29086 0.199318 9.46166 0.609964L11.5278 5.57744C11.5998 5.75056 11.7626 5.86885 11.9495 5.88383L17.3123 6.31376C17.7556 6.3493 17.9354 6.90256 17.5976 7.19189L13.5117 10.6919C13.3693 10.8139 13.3071 11.0053 13.3506 11.1876L14.5989 16.4208C14.7021 16.8534 14.2315 17.1954 13.8519 16.9635L9.26063 14.1592C9.10062 14.0615 8.89938 14.0615 8.73937 14.1592L4.14806 16.9635C3.76851 17.1954 3.29788 16.8534 3.40108 16.4208L4.64939 11.1876C4.69289 11.0053 4.6307 10.8139 4.48831 10.6919L0.402413 7.19189C0.0646446 6.90256 0.244408 6.3493 0.687735 6.31376L6.05054 5.88383C6.23744 5.86885 6.40024 5.75056 6.47225 5.57744L8.53834 0.609964Z"
+                      fill="#FDB022"></path>
+                  </svg>
+                </div>
+                <div class="flex flex-row justify-between mb-6"><p
+                  class="font-normal text-md capitalize rounded-3xl bg-gradient-to-r from-start-gradient to-end-gradient text-white py-1 px-5">
+                  РК, Туркестанская область, Сарыагашский р-он., п. Коктерек, ул. Абая д. 76, инд.160917</p>
+                  <p class="text-dark-blue font-bold"></p></div>
+                <p class="font-normal text-dark-blue mb-3.5">Ак Тилек.</p>
+                <div class="flex flex-row items-center justify-between"><p class="text-dark-blue">От <br> <span
+                  class="text-light-green font-bold text-lg">₸ </span></p><a
+                  class="flex items-center h-full rounded-3xl bg-[#30D9BD] text-white py-1 px-4" href="/place/1">Подробнее</a>
+                </div>
+              </div>
+            </div>
+          </a></div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div class="bg-gradient-to-r from-[#008CAB] to-[#00A3C7] text-[#fff] py-10">
+    <div class="container mx-auto">
+      <div class="flex justify-between font-medium text-lg">
+        <div><p class="text-5xl font-bold text-light-blue">Med<span class="text-green">Tour</span></p></div>
+        <ul>
+          <li><a class="flex items-center h-full" href="/">Главная</a></li>
+          <li><a class="flex items-center h-full" href="/">О проекте</a></li>
+          <li><a class="flex items-center h-full" href="/">Санатории</a></li>
+        </ul>
+        <ul>
+          <li><a class="flex items-center h-full" href="/">Способы оплаты</a></li>
+          <li><a class="flex items-center h-full" href="/">Публичная оферта</a></li>
+        </ul>
+        <ul>
+          <li><a class="flex items-center h-full" href="/">Политика конфиденциальности</a></li>
+          <li><a class="flex items-center h-full" href="/">Контакты</a></li>
+        </ul>
+        <div class="flex gap-x-4"><a class="flex items-center h-full" href="/"><span
+          style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span
+          style="box-sizing: border-box; display: block; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; max-width: 100%;"><img
+          style="display: block; max-width: 100%; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px;"
+          alt="" aria-hidden="true"
+          src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e"></span><img
+          alt="Price tag" src="/images/phone.svg" decoding="async" data-nimg="intrinsic"
+          style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: medium none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
+          srcset="/images/phone.svg 1x, /images/phone.svg 2x"><noscript></noscript></span></a><a
+          class="flex items-center h-full" href="/"><span
+          style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span
+          style="box-sizing: border-box; display: block; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; max-width: 100%;"><img
+          style="display: block; max-width: 100%; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px;"
+          alt="" aria-hidden="true"
+          src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e"></span><img
+          alt="Price tag" src="/images/instagram.svg" decoding="async" data-nimg="intrinsic"
+          style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: medium none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
+          srcset="/images/instagram.svg 1x, /images/instagram.svg 2x"><noscript></noscript></span></a><a
+          class="flex items-center h-full" href="/"><span
+          style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span
+          style="box-sizing: border-box; display: block; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; max-width: 100%;"><img
+          style="display: block; max-width: 100%; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px;"
+          alt="" aria-hidden="true"
+          src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e"></span><img
+          alt="Price tag" src="/images/facebook.svg" decoding="async" data-nimg="intrinsic"
+          style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: medium none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
+          srcset="/images/facebook.svg 1x, /images/facebook.svg 2x"><noscript></noscript></span></a><a
+          class="flex items-center h-full" href="/"><span
+          style="box-sizing: border-box; display: inline-block; overflow: hidden; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; position: relative; max-width: 100%;"><span
+          style="box-sizing: border-box; display: block; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px; max-width: 100%;"><img
+          style="display: block; max-width: 100%; width: initial; height: initial; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; opacity: 1; border: 0px none; margin: 0px; padding: 0px;"
+          alt="" aria-hidden="true"
+          src="data:image/svg+xml,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20version=%271.1%27%20width=%2730%27%20height=%2730%27/%3e"></span><img
+          alt="Price tag" src="/images/youtube.svg" decoding="async" data-nimg="intrinsic"
+          style="position: absolute; inset: 0px; box-sizing: border-box; padding: 0px; border: medium none; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%;"
+          srcset="/images/youtube.svg 1x, /images/youtube.svg 2x"><noscript></noscript></span></a></div>
+      </div>
+      <div class="text-center mt-5"><p>© 2021 I Все права защищены I Политика конфиденциальности</p></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+  {
+    type: 'Стандарт',
+    numbers: [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106
+    ],
+    reservations: [
+      {
+        number: 101,
+        closedForRepair: false,
+        reservations_start: '12-01-2022',
+        reservations_end: '12-01-2022',
+        paid: false,
+        reservator: {
+          firstName: 'Шерхан',
+          lastName: 'Кайратулы'
+        }
+      }
+    ]
+  }
+]

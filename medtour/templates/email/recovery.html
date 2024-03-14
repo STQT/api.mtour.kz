@@ -1,0 +1,6 @@
+{% extends "email/base.html" %}
+
+{% block content %}
+<h2 style="text-align: center;">Password Recovery Code</h2>
+      <p style="text-align: center;">Your password recovery link is: {{ recovery_link }}</p>
+{% endblock %}

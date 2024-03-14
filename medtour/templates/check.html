@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Квитанция</title>
+  <style>
+    @import url('./font/stylesheet.css');
+
+    body {
+      width: 230mm;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0;
+      font-size: 12pt;
+      background: rgb(204, 204, 204);
+      font-family: Gilroy, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+    }
+
+    .main-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 10mm auto;
+      background: rgb(33, 188, 222);
+      background: linear-gradient(90deg, rgba(33, 188, 222, 1) 18.79%, rgba(49, 217, 189, 1) 96.76%);
+      box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+    }
+
+    .sub-page {
+      padding: 1cm;
+      height: 270mm;
+      background-color: #F5F5F5;
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        width: 210mm;
+        height: 297mm;
+      }
+
+      .main-page {
+        margin: 0;
+        border: initial;
+        border-radius: initial;
+        width: initial;
+        min-height: initial;
+        box-shadow: initial;
+        background: initial;
+        page-break-after: always;
+      }
+    }
+
+    header {
+      color: #FFF;
+      font-weight: 700;
+
+    }
+
+    header div {
+      margin: 0 10mm;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header div h1 {
+      font-size: 18px;
+
+    }
+
+    header div h2 {
+      font-size: 26px;
+    }
+
+    section {
+      color: #1E3C54;
+    }
+
+    h3 {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+      font-weight: 400;
+      justify-content: space-between;
+    }
+
+    .reservation {
+      display: flex;
+      flex-direction: column;
+      max-width: 75mm;
+      border: 2px solid #E7E7E7;
+    }
+
+    .reservation section {
+      margin: 0 17px;
+    }
+
+    .dates {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-weight: 1200;
+      font-size: 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #E7E7E7;
+    }
+
+
+    .svg {
+      margin: 0 34px;
+    }
+
+    .departure {
+      text-align: right;
+    }
+
+    .dates h6 {
+      font-size: 11px;
+    }
+
+    .org-details {
+      font-weight: 600;
+      font-size: 10px;
+      border-bottom: 2px solid #E7E7E7;
+      padding-bottom: 10px;
+    }
+
+    .org-details h4 {
+      font-size: 14px;
+    }
+
+
+    .org-details h5 {
+      font-size: 11px;
+    }
+
+    .org-details p {
+      font-weight: 400;
+      font-size: 10px;
+    }
+
+    address {
+      font-style: normal;
+      font-size: 10px;
+      font-weight: 400;
+    }
+
+    .user-details {
+      font-size: 10px;
+    }
+
+    .payment-main {
+      width: 105mm;
+      gap: 10mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .payment-main section {
+      border: 2px solid #E7E7E7;
+    }
+
+    .payment-details {
+      margin: 0 17px;
+    }
+
+    .payment-details h4 {
+      font-weight: 500;
+      font-size: 14px;
+      padding-top: 5px;
+    }
+
+    .packets div {
+      border-bottom: 2px solid #E7E7E7;
+
+    }
+
+    .packets div p {
+      font-size: 10px;
+    }
+
+    .price {
+      float: right;
+    }
+
+    .additional-services p {
+      font-size: 10px;
+    }
+
+    .additional-services p span {
+      float: right;
+      font-weight: 600;
+
+    }
+
+    .price {
+      font-weight: 600;
+    }
+
+    .payment-total div {
+      margin: 0 17px;
+    }
+
+    .payment-total h5 {
+      font-weight: 500;
+      font-size: 14px;
+
+    }
+
+    .payment-total h6 {
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .underline {
+      border-bottom: 2px solid #E7E7E7;
+
+    }
+
+    .payment-total h6 span {
+      float: right;
+    }
+
+    .footer {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .question h6 {
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .question p {
+      font-weight: 400;
+      font-size: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #21BCDE;
+      font-weight: 400;
+      font-size: 10px;
+    }
+
+    footer {
+      margin-top: 95mm;
+      border-bottom: 2px solid #E7E7E7;
+    }
+
+    footer h2 {
+      color: #586B76;
+      font-weight: 700;
+      font-size: 26px;
+    }
+
+    aside {
+      margin-top: 10px;
+      float: right;
+      font-weight: 400;
+      font-size: 12px;
+    }
+
+
+  </style>
+</head>
+<body>
+<div class="main-page">
+  <header>
+    <div>
+      <h1>Ваша квитанция от MedTour</h1>
+      <h2>MedTour</h2>
+    </div>
+  </header>
+  <main class="sub-page">
+    <section>
+      <article>
+        <h3>Квитанция №895647</h3>
+        <h3>Забронировано: 12 декабря 2022</h3>
+      </article>
+      <div class="content">
+        <article class="reservation">
+          <section class="dates">
+            <div>
+              <h6>Прибытие</h6>
+              <span>30 декабря 2022</span>
+            </div>
+            <svg class="svg" width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M6.71146 5.45455L1.56294 0.272727C1.19519 -0.0909091 0.643565 -0.0909091 0.275814 0.272727C-0.0919376 0.636364 -0.0919376 1.18182 0.275814 1.54545L4.78076 6L0.275814 10.4545C0.091938 10.6364 0 10.8182 0 11.0909C0 11.6364 0.367751 12 0.919378 12C1.19519 12 1.37907 11.9091 1.56294 11.7273L6.8034 6.54545C7.07921 6.36364 7.07921 5.81818 6.71146 5.45455Z"
+                fill="#999695"/>
+            </svg>
+            <div class="departure">
+              <h6>Выезд</h6>
+              <span>2 января 2023</span>
+            </div>
+          </section>
+          <section class="org-details">
+            <h4><span>3</span> ночи в <span>Ак-Тилек</span></h4>
+            <h5>Тип организации: <span>Санаторий</span></h5>
+            <p>
+              Санаторий Ак-Тилек, Казахстан
+              Туркестанская область,
+              Сарыагашский р-он., п. Коктерек,
+              ул. Абая д. 76
+            </p>
+            <address>Телефон: <span>+7 (778) 901 81-75</span></address>
+          </section>
+          <section class="user-details">
+            <div>
+              <p>Клиент: <span>Илияс Д. К.</span></p>
+              <address>Телефон: <span>+7 (778) 901 85-75</span></address>
+            </div>
+            <p>
+              <span>2</span> комнатный номер
+            </p>
+            <p>
+              <span>2</span> гостя в этой поездке: <span>3</span> взрослых, <span>1</span> ребенок
+            </p>
+          </section>
+        </article>
+        <article class="payment-main">
+          <section>
+            <div class="payment-details">
+              <h4>Оплаченные услуги</h4>
+              <div class="packets">
+                <h5>Пакеты:</h5>
+                <div>
+                  <p>Пакет <span>"Семейный"</span><span class="price">₸ 30 000.00</span></p>
+                </div>
+              </div>
+              <div class="additional-services">
+                <h5>Дополнительные услуги:</h5>
+                <p>Физиотерапия<span>₸ 5 000.00</span></p>
+                <p>Душ Шарко<span>₸ 5 000.00</span></p>
+                <p>Циркулярный душ<span>₸ 5 000.00</span></p>
+              </div>
+            </div>
+          </section>
+          <section>
+            <div class="payment-total">
+              <div>
+                <h5>Детализация цены</h5>
+                <h6 class="underline">Итого (KZT)<span>₸ 75 000.00</span></h6>
+                <h6>Оплачено (KZT)<span>₸ 75 000.00</span></h6>
+              </div>
+            </div>
+          </section>
+        </article>
+      </div>
+
+    </section>
+    <footer>
+      <div class="footer">
+        <div class="question">
+          <h6>
+            Есть вопросы?
+          </h6>
+          <p>Напишите на <a href="/">support@mtour.kz</a></p>
+        </div>
+        <a href="https://mtour.kz/">mtour.kz</a>
+        <h2>MedTour</h2>
+      </div>
+    </footer>
+    <aside>Страница 1 из 1</aside>
+  </main>
+</div>
+</body>
+</html>

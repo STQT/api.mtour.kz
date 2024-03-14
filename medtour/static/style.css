@@ -1,0 +1,274 @@
+@import url('./font/stylesheet.css');
+
+body {
+  width: 230mm;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0;
+  font-size: 12pt;
+  background: rgb(204, 204, 204);
+  font-family: Gilroy, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+.main-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 10mm auto;
+  background: rgb(33, 188, 222);
+  background: linear-gradient(90deg, rgba(33, 188, 222, 1) 18.79%, rgba(49, 217, 189, 1) 96.76%);
+  box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+.sub-page {
+  padding: 1cm;
+  height: 270mm;
+  background-color: #F5F5F5;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    width: 210mm;
+    height: 297mm;
+  }
+
+  .main-page {
+    margin: 0;
+    border: initial;
+    border-radius: initial;
+    width: initial;
+    min-height: initial;
+    box-shadow: initial;
+    background: initial;
+    page-break-after: always;
+  }
+}
+
+header {
+  color: #FFF;
+  font-weight: 700;
+
+}
+
+header div {
+  margin: 0 10mm;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header div h1 {
+  font-size: 18px;
+
+}
+
+header div h2 {
+  font-size: 26px;
+}
+
+section {
+  color: #1E3C54;
+}
+
+h3 {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  font-weight: 400;
+  justify-content: space-between;
+}
+
+.reservation {
+  display: flex;
+  flex-direction: column;
+  max-width: 75mm;
+  border: 2px solid #E7E7E7;
+}
+
+.reservation section {
+  margin: 0 17px;
+}
+
+.dates {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 600;
+  font-size: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #E7E7E7;
+}
+
+
+.svg {
+  margin: 0 34px;
+}
+
+.departure {
+  text-align: right;
+}
+
+.dates h6 {
+  font-size: 11px;
+}
+
+.org-details {
+  font-weight: 600;
+  font-size: 10px;
+  border-bottom: 2px solid #E7E7E7;
+  padding-bottom: 10px;
+}
+
+.org-details h4 {
+  font-size: 14px;
+}
+
+
+.org-details h5 {
+  font-size: 11px;
+}
+
+.org-details p {
+  font-weight: 400;
+  font-size: 10px;
+}
+
+address {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.user-details {
+  font-size: 10px;
+}
+
+.payment-main {
+  width: 105mm;
+  gap: 10mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.payment-main section {
+  border: 2px solid #E7E7E7;
+}
+
+.payment-details {
+  margin: 0 17px;
+}
+
+.payment-details h4 {
+  font-weight: 500;
+  font-size: 14px;
+  padding-top: 5px;
+}
+
+.packets div {
+  border-bottom: 2px solid #E7E7E7;
+
+}
+
+.packets div p {
+  font-size: 10px;
+}
+
+.price {
+  float: right;
+}
+
+.additional-services p {
+  font-size: 10px;
+}
+
+.additional-services p span {
+  float: right;
+  font-weight: 600;
+
+}
+
+.price {
+  font-weight: 600;
+}
+
+.payment-total div {
+  margin: 0 17px;
+}
+
+.payment-total h5 {
+  font-weight: 500;
+  font-size: 14px;
+
+}
+
+.payment-total h6 {
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.underline {
+  border-bottom: 2px solid #E7E7E7;
+
+}
+
+.payment-total h6 span {
+  float: right;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.question h6 {
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.question p {
+  font-weight: 400;
+  font-size: 10px;
+}
+
+a {
+  text-decoration: none;
+  color: #21BCDE;
+  font-weight: 400;
+  font-size: 10px;
+}
+
+footer {
+  margin-top: 95mm;
+  border-bottom: 2px solid #E7E7E7;
+}
+
+footer h2 {
+  color: #586B76;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+aside {
+  margin-top: 10px;
+  float: right;
+  font-weight: 400;
+  font-size: 12px;
+}
+

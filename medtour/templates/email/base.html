@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>MedTour</title>
+    <style>
+      .logo {
+        width: 200px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .social-media-logos {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+
+
+      }
+
+      .social-media-logo {
+        width: 40px;
+        height: 40px;
+        margin: 0 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="https://mtour.kz/files/emailImg/MedTour.png" alt="Company Logo" class="logo">
+    <div class="social-media-logos">
+      <a href="#">
+        <img src="https://mtour.kz/files/emailImg/Social%20Media/Facebook.png" alt="" class="social-media-logo">
+      </a>
+      <a href="#">
+        <img src="https://mtour.kz/files/emailImg/Social%20Media/Youtube.png" alt="" class="social-media-logo">
+      </a>
+      <a href="#">
+        <img src="https://mtour.kz/files/emailImg/Social%20Media/Instagram.png" alt="" class="social-media-logo">
+      </a>
+        <a href="#">
+        <img src="https://mtour.kz/files/emailImg/Social%20Media/Whatsapp.png"  alt="" class="social-media-logo">
+      </a>
+    </div>
+    {% block content %}
+    {% endblock %}
+  </body>
+</html>
