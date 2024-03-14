@@ -3,7 +3,11 @@ import base64
 import requests
 from django.conf import settings
 from django.urls import reverse
-from sentry_sdk import capture_message
+
+try:
+    from sentry_sdk import capture_message
+except:
+    pass
 
 
 class PaymentApi:

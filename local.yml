@@ -17,8 +17,7 @@ services:
     volumes:
       - .:/app:z
     env_file:
-      - ./.envs/.local/.django
-      - ./.envs/.local/.postgres
+      - .env
     ports:
       - '8000:8000'
     command: /start
@@ -33,23 +32,7 @@ services:
       - medtour_local_postgres_data:/var/lib/postgresql/data
       - medtour_local_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.local/.postgres
-
-  docs:
-    image: medtour_local_docs
-    container_name: medtour_local_docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./medtour:/app/medtour:z
-    ports:
-      - '9000:9000'
-    command: /start-docs
+      - .env
 
   redis:
     image: redis:6
