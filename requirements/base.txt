@@ -9,7 +9,7 @@ django-celery-beat==2.3.0  # https://github.com/celery/django-celery-beat
 sorl-thumbnail==12.9.0  # https://github.com/jazzband/sorl-thumbnail
 sorl-thumbnail-serializer-field==0.2.1  # https://github.com/dessibelle/sorl-thumbnail-serializer-field
 django-ordered-model==3.6  # https://github.com/django-ordered-model/django-ordered-model
-weasyprint==56.1
+# weasyprint==56.1
 
 # Django
 # ------------------------------------------------------------------------------
